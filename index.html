@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Gallery</title>
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+    .portfolio-section { width: 90%; max-width: 1200px; margin: 50px auto; }
+    .swiper { width: 100%; height: 300px; }
+    .swiper-slide { position: relative; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+    .swiper-slide img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+
+    /* Lightbox popup */
+    .lightbox {
+      display: none;
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .lightbox .swiper { width: 80%; height: 80%; }
+    .lightbox img { border-radius: 10px; }
+    .close-lightbox {
+      position: absolute; top: 20px; right: 30px;
+      font-size: 40px; color: #fff; cursor: pointer;
+      z-index: 10000;
+    }
+  </style>
+</head>
+<body>
+
+  <section class="portfolio-section">
+    <div class="swiper portfolioSwiper">
+      <div class="swiper-wrapper">
+        <!-- Slide 1 -->
+        <div class="swiper-slide" data-images="https://picsum.photos/id/1015/800/600,https://picsum.photos/id/1016/800/600,https://picsum.photos/id/1018/800/600">
+          <img src="https://picsum.photos/id/1015/600/400" alt="Project 1">
+        </div>
+        <!-- Slide 2 -->
+        <div class="swiper-slide" data-images="https://picsum.photos/id/1025/800/600,https://picsum.photos/id/1026/800/600,https://picsum.photos/id/1027/800/600">
+          <img src="https://picsum.photos/id/1025/600/400" alt="Project 2">
+        </div>
+        <!-- Slide 3 -->
+        <div class="swiper-slide" data-images="https://picsum.photos/id/1035/800/600,https://picsum.photos/id/1036/800/600,https://picsum.photos/id/1037/800/600">
+          <img src="https://picsum.photos/id/1035/600/400" alt="Project 3">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <span class="close-lightbox">&times;</span>
+    <div class="swiper lightboxSwiper">
+      <div class="swiper-wrapper"></div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+  </div>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    // Main gallery
+    const portfolioSwiper = new Swiper(".portfolioSwiper", {
+      loop: true,
+      autoplay: { delay: 2500, disableOnInteraction: false },
+      slidesPerView: 3,
+      spaceBetween: 20,
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        480: { slidesPerView: 1 }
+      }
+    });
+
+    // Lightbox logic
+    const lightbox = document.getElementById("lightbox");
+    const closeBtn = document.querySelector(".close-lightbox");
+    const lightboxWrapper = document.querySelector(".lightbox .swiper-wrapper");
+    let lightboxSwiper;
+
+    document.querySelectorAll(".portfolioSwiper .swiper-slide").forEach(slide => {
+      slide.addEventListener("click", () => {
+        const images = slide.dataset.images.split(",");
+        lightboxWrapper.innerHTML = "";
+        images.forEach(src => {
+          const div = document.createElement("div");
+          div.className = "swiper-slide";
+          div.innerHTML = `<img src="${src}" alt="">`;
+          lightboxWrapper.appendChild(div);
+        });
+
+        lightbox.style.display = "flex";
+        if (lightboxSwiper) lightboxSwiper.destroy();
+        lightboxSwiper = new Swiper(".lightboxSwiper", {
+          loop: true,
+          pagination: { el: ".swiper-pagination", clickable: true },
+          navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }
+        });
+      });
+    });
+
+    closeBtn.addEventListener("click", () => lightbox.style.display = "none");
+  </script>
+</body>
+</html>
